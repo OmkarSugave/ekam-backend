@@ -53,22 +53,7 @@ exports.getParentChildDashboard = async (req, res) => {
 // =========================================
 // GET PLAYER SCHEDULE
 // =========================================
-exports.getPlayerSchedule = async (req, res) => {
-  try {
-    const player = await Player.findOne({ user: req.user._id });
 
-    if (!player)
-      return res.status(400).json({ message: "Player not found" });
-
-    const schedule = await Schedule.find({ player: player._id })
-      .populate("coach", "user");
-
-    res.json(schedule);
-
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
 
 // =========================================
 // GET PLAYER ASSESSMENTS

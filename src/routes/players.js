@@ -5,13 +5,12 @@ const { auth, role } = require("../middlewares/auth");
 const {
   getPlayerDashboard,
   getParentChildDashboard,
-  getPlayerSchedule,
-  getPlayerAssessments,
-  getPlayerAttendance
+  getMySchedule,
+  getMyAttendance,
+  getPlayerAssessments
 } = require("../controllers/playerController");
 
 const { getNotifications } = require("../controllers/notificationController");
-
 const {
   getPlayerSkillHistory,
   getPlayerSummary
@@ -23,26 +22,20 @@ router.get("/dashboard", auth, role("player"), getPlayerDashboard);
 // ----------------- PARENT CHILD DASHBOARD ---
 router.get("/child/:id", auth, role("parent"), getParentChildDashboard);
 
-// ----------------- PLAYER SCHEDULE ----------
-router.get("/schedule", auth, role("player"), getPlayerSchedule);
+// ----------------- PLAYER SCHEDULE (✅ FIXED) ----------
+router.get("/my-schedule", auth, role("player"), getMySchedule);
+
+// ----------------- PLAYER ATTENDANCE ----------
+router.get("/my-attendance", auth, role("player"), getMyAttendance);
 
 // ----------------- PLAYER ASSESSMENTS -------
 router.get("/assessments", auth, role("player"), getPlayerAssessments);
 
-// ----------------- PLAYER ATTENDANCE --------
-router.get("/attendance", auth, role("player"), getPlayerAttendance);
-
 // ----------------- PLAYER NOTIFICATIONS -----
-router.get("/notifications", auth, role("player","parent"), getNotifications);
+router.get("/notifications", auth, getNotifications);
 
 // ----------------- PLAYER REPORTS -----------
 router.get("/summary/:playerId", auth, getPlayerSummary);
 router.get("/skill-history/:playerId", auth, getPlayerSkillHistory);
-const { getMyAttendance } = require("../controllers/playerController");
-
-router.get("/my-attendance", auth, getMyAttendance);
-const { getMySchedule } = require("../controllers/playerController");
-
-router.get("/my-schedule", auth, getMySchedule);
 
 module.exports = router;
