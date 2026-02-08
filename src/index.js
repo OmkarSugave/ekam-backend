@@ -7,52 +7,35 @@ dotenv.config();
 
 const connectDB = require("./config/db");
 
-// --------------------
-// Initialize app
-// --------------------
 const app = express();
 
 // --------------------
-// Database
+// DATABASE
 // --------------------
 connectDB();
 
 // --------------------
-// CORS CONFIG (VERY IMPORTANT)
+// MIDDLEWARE
 // --------------------
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://ekam-frontend-kappa.vercel.app" // ✅ your Vercel frontend
-];
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://ekam-frontend-kappa.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow Postman / server calls
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
-
-// --------------------
-// Middleware
-// --------------------
 app.use(express.json());
 
 // --------------------
-// Static files (Fee receipts, uploads)
+// STATIC FILES
 // --------------------
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // --------------------
-// Routes
+// ROUTES
 // --------------------
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/admin", require("./routes/admin"));
@@ -61,14 +44,14 @@ app.use("/api/players", require("./routes/players"));
 app.use("/api/account", require("./routes/account"));
 
 // --------------------
-// Health check
+// HEALTH CHECK
 // --------------------
 app.get("/", (req, res) => {
   res.send("EKAM TT Backend Running");
 });
 
 // --------------------
-// Start server
+// START SERVER
 // --------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
