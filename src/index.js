@@ -18,36 +18,36 @@ const app = express();
 connectDB();
 
 // --------------------
-// Middleware
+// CORS CONFIG (VERY IMPORTANT)
 // --------------------
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ekam-frontend-kappa.vercel.app" // ✅ your Vercel frontend
+];
 
-// ✅ Proper CORS setup (local + production ready)
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (Postman, mobile apps)
-      if (!origin) return callback(null, true);
-
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://ekam-frontend-kappa.vercel.app",
-        // 🔴 we will add Vercel URL here later
-      ];
-
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow Postman / server calls
       if (allowedOrigins.includes(origin)) {
-        callback(null, true);
+        return callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
+// --------------------
+// Middleware
+// --------------------
 app.use(express.json());
 
 // --------------------
-// Static files
+// Static files (Fee receipts, uploads)
 // --------------------
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
